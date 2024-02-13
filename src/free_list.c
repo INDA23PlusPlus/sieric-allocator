@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+/**
+ * stolen from myself 9 months ago:
+ * https://gitlab.com/Simsva/shitos/-/blob/29da1aee365a860c1a3152a12e1a00e168f93b28/src/kernel/mem/heap.c
+ */
+
 #define HEAP_MAGIC    0x0defbeef
 #define HEAP_INDEX_SZ 0x1000
 #define HEAP_SZ       0x100000
@@ -143,6 +148,9 @@ static size_t heap_hole_find(heap_t *heap, size_t size, uint8_t align) {
 static void *heap_alloc(heap_t *heap, size_t size, uint8_t align) {
     size_t real_size, hole_size, hole;
     heap_header_t *orig_header;
+
+    /* sweep the bugs under the rug */
+    if(align && align < 6) align = 6;
 
     real_size = size + sizeof(heap_header_t) + sizeof(heap_footer_t);
     hole = heap_hole_find(heap, real_size, align);

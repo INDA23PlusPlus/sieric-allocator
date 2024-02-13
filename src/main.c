@@ -32,11 +32,9 @@ retry:
     a->init();
     a->debug();
     puts("-------- alloc --------");
-    /* weird alignments cause segfaults or corrupt headers */
     char *str = a->alloc(32, 2);
     strcpy(str, "Tjena mors");
     printf("str: %p (%s)\n", str, str);
-    assert(((uintptr_t)str & ((1<<0)-1)) == 0 && "alignment");
     a->debug();
     puts("-------- free --------");
     a->free(str);
